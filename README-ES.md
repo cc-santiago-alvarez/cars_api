@@ -1,11 +1,11 @@
-# Cars API
+# Cars API - Santiago Álvarez
 
 API REST para gestión de vehículos y marcas, construida con Flask y MongoDB.
 
 ## 🚀 Estructura del Proyecto
 
 ```
-cars_api/
+cc-santiago-alvarez-cars_api/
 ├── app.py
 ├── db.py
 ├── requirements.txt
@@ -29,14 +29,19 @@ cars_api/
 
 1. Clonar repositorio
 2. Crear entorno virtual:
-   ```bash
+   
    # Windows
+   ```bash
    python -m venv venv
    .\venv\Scripts\activate
-
+   ```
    # Linux/Mac
+   ```bash
    python3 -m venv venv
    source venv/bin/activate
+   ```
+   si no funciona intentar con:
+   ```bash
    . .venv/bin/activate
    ```
 3. Instalar dependencias:
@@ -54,8 +59,8 @@ El servidor iniciará en `http://0.0.0.0:8020`
 ## 📡 Endpoints de la API
 
 ### Vehículos
-- `GET /api/v1/get_cars` - Listar vehículos (paginable)
-- `GET /api/v1/get_cars/car_details` - Búsqueda avanzada
+- `GET /api/v1/get_cars` - Listar vehículos con filtros básicos (paginable)
+- `GET /api/v1/get_cars/car_details` - Búsqueda avanzada con múltiples filtros
 - `POST /api/v1/create_car` - Crear nuevo vehículo
 
 ### Marcas
@@ -64,9 +69,24 @@ El servidor iniciará en `http://0.0.0.0:8020`
 
 ## 🔧 Uso con Postman
 
-### Ejemplo GET (Listar vehículos)
+### Filtros y Paginación (Query Parameters)
+| Parámetro    | Descripción                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `brand`      | Filtrar por nombre de marca (ej: Toyota)                                    |
+| `model`      | Filtrar por modelo de auto (solo en `/car_details`, ej: Corolla)            |
+| `price`      | Filtrar por precio exacto (ej: 25000)                                       |
+| `kilometers` | Filtrar por kilometraje exacto (ej: 15000)                                  |
+| `page`       | Número de página para paginación (ej: 2)                                    |
+| `limit`      | Cantidad de resultados por página (ej: 10)                                  |
+
+**Ejemplo con múltiples filtros:**
 ```
-GET http://localhost:8020/api/v1/get_cars?page=1&limit=5
+GET http://localhost:8020/api/v1/get_cars/car_details?brand=Toyota&model=Corolla&page=1&limit=5
+```
+
+### Ejemplo GET (Listar vehículos paginados)
+```
+GET http://localhost:8020/api/v1/get_cars?page=1&limit=5&brand=Ford
 ```
 
 ### Ejemplo POST (Crear marca):
@@ -77,6 +97,11 @@ GET http://localhost:8020/api/v1/get_cars?page=1&limit=5
 ```
 
 ## 🐧 Uso con cURL
+
+### Listar vehículos con filtros:
+```bash
+curl -X GET "http://localhost:8020/api/v1/get_cars/car_details?brand=Toyota&model=Corolla&price=25000&page=1&limit=5"
+```
 
 ### Listar marcas:
 ```bash
@@ -118,26 +143,19 @@ Códigos comunes:
 2. Asegurar acceso a internet si usa MongoDB Atlas
 3. Validar credenciales
 
+### Filtros no funcionan
+- Usar nombres exactos de parámetros (case-sensitive)
+- Para búsquedas parciales usar formato: `brand=Toyo*` (autocompletado con wildcards)
+- Valores numéricos sin comillas
+
 ### Dependencias faltantes
 ```bash
 pip freeze > requirements.txt  # Regenerar si es necesario
 pip install -r requirements.txt --force-reinstall
 ```
 
-### Puerto en uso
-```bash
-# Linux/Mac
-sudo lsof -i :8020
-kill -9 <PID>
-
-# Windows
-netstat -ano | findstr :8020
-taskkill /PID <PID> /F
-```
-
 ## 📄 Notas Adicionales
-- Los datos se almacenan en formato UUID
+- Los filtros pueden combinarse según necesidades
+- Paginación opcional: si no se envían `page` y `limit` muestra todos los resultados
+- Los UUID de marcas se obtienen del endpoint `get_brands`
 - CORS habilitado para todos los dominios
-- Logs de acceso en consola para `/api/v1/get_cars`
-
-

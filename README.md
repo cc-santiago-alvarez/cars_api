@@ -1,6 +1,6 @@
-# Cars API
+# Cars API - Santiago Álvarez
 
-REST API for managing cars and brands, built with Flask and MongoDB.
+REST API for vehicle and brand management, built with Flask and MongoDB.
 
 ## 🚀 Project Structure
 
@@ -27,18 +27,25 @@ cars_api/
 
 ## ⚙️ Installation
 
-1. Clone repository
-2. Create virtual environment:
+1. Clone the repository
+2. Create a virtual environment:
+
+   **Windows:**
    ```bash
-   # Windows
    python -m venv venv
    .\venv\Scripts\activate
+   ```
 
-   # Linux/Mac
+   **Linux/Mac:**
+   ```bash
    python3 -m venv venv
    source venv/bin/activate
+   ```
+   If activation fails, try:
+   ```bash
    . .venv/bin/activate
    ```
+
 3. Install dependencies:
    ```bash
    pip install -r requirements.txt
@@ -53,20 +60,35 @@ Server will start at `http://0.0.0.0:8020`
 
 ## 📡 API Endpoints
 
-### Cars
-- `GET /api/v1/get_cars` - List cars (pagination supported)
-- `GET /api/v1/get_cars/car_details` - Advanced search
-- `POST /api/v1/create_car` - Create new car
+### Vehicles
+- `GET /api/v1/get_cars` - List vehicles with basic filters (paginated)
+- `GET /api/v1/get_cars/car_details` - Advanced search with multiple filters
+- `POST /api/v1/create_car` - Create new vehicle
 
 ### Brands
 - `GET /api/v1/get_brands` - List brands
 - `POST /api/v1/create_brand` - Create new brand
 
-## 🔧 Using Postman
+## 🔧 Usage with Postman
 
-### GET Example (List Cars)
+### Filters & Pagination (Query Parameters)
+| Parameter    | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `brand`      | Filter by brand name (e.g., Toyota)                                         |
+| `model`      | Filter by car model (only in `/car_details`, e.g., Corolla)                 |
+| `price`      | Filter by exact price (e.g., 25000)                                         |
+| `kilometers` | Filter by exact mileage (e.g., 15000)                                       |
+| `page`       | Page number for pagination (e.g., 2)                                        |
+| `limit`      | Results per page (e.g., 10)                                                 |
+
+**Multi-filter Example:**
 ```
-GET http://localhost:8020/api/v1/get_cars?page=1&limit=5
+GET http://localhost:8020/api/v1/get_cars/car_details?brand=Toyota&model=Corolla&page=1&limit=5
+```
+
+### GET Example (Paginated Vehicles):
+```
+GET http://localhost:8020/api/v1/get_cars?page=1&limit=5&brand=Ford
 ```
 
 ### POST Example (Create Brand):
@@ -76,14 +98,19 @@ GET http://localhost:8020/api/v1/get_cars?page=1&limit=5
 }
 ```
 
-## 🐧 Using cURL
+## 🐧 cURL Usage
+
+### List Vehicles with Filters:
+```bash
+curl -X GET "http://localhost:8020/api/v1/get_cars/car_details?brand=Toyota&model=Corolla&price=25000&page=1&limit=5"
+```
 
 ### List Brands:
 ```bash
 curl -X GET "http://localhost:8020/api/v1/get_brands"
 ```
 
-### Create Car:
+### Create Vehicle:
 ```bash
 curl -X POST -H "Content-Type: application/json" \
 -d '{
@@ -97,7 +124,7 @@ http://localhost:8020/api/v1/create_car
 
 ## 🚨 Error Handling
 
-Standardized responses:
+API returns standardized responses:
 ```json
 {
     "data": null,
@@ -115,8 +142,13 @@ Common status codes:
 
 ### MongoDB Connection Issues
 1. Verify connection string in `db.py`
-2. Check internet access if using MongoDB Atlas
+2. Ensure internet access if using MongoDB Atlas
 3. Validate credentials
+
+### Filters Not Working
+- Use exact parameter names (case-sensitive)
+- For partial matches use wildcards: `brand=Toyo*`
+- Numeric values without quotes
 
 ### Missing Dependencies
 ```bash
@@ -124,19 +156,8 @@ pip freeze > requirements.txt  # Regenerate if needed
 pip install -r requirements.txt --force-reinstall
 ```
 
-### Port Conflicts
-```bash
-# Linux/Mac
-sudo lsof -i :8020
-kill -9 <PID>
-
-# Windows
-netstat -ano | findstr :8020
-taskkill /PID <PID> /F
-```
-
 ## 📄 Additional Notes
-- Data stored using UUID format
+- Filters can be combined as needed
+- Pagination is optional (omit `page`/`limit` to get all results)
+- Brand UUIDs are obtained from the `get_brands` endpoint
 - CORS enabled for all domains
-- Access logs in console for `/api/v1/get_cars`
-```

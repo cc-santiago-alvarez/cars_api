@@ -1,4 +1,4 @@
-# Cars API - Santiago Álvarez
+# Cars API
 
 REST API for vehicle and brand management, built with Flask and MongoDB.
 

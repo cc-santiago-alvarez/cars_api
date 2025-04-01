@@ -1,11 +1,11 @@
-# Cars API - Santiago Álvarez
+# Cars API
 
 API REST para gestión de vehículos y marcas, construida con Flask y MongoDB.
 
 ## 🚀 Estructura del Proyecto
 
 ```
-cc-santiago-alvarez-cars_api/
+cars_api/
 ├── app.py
 ├── db.py
 ├── requirements.txt
